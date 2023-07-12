@@ -91,13 +91,13 @@
 <body>
 	<center><button onclick="mainMenu()" id="menu">
 			<h1><u>MAFIA</u></h1>
-		</button></center>
+		</button></center><br>
 
 	<div id="mainMenu">
-		<button onclick="shuffleRoles(false, false)" id="startMafia">Start a full Table</button>
-		<button onclick="shuffleRoles(false, true)" id="startMafia">Start with a Casper</button>
-		<button onclick="shuffleRoles(true)" id="paradiseMode">Paradise Mode</button>
-		<button onclick="shufflePlayers()" id="shufflePlayers">Shuffle players</button>
+		<button onclick="shuffleRoles(false, false)" id="startMafia">>Start a full Table</button><br><br>
+		<button onclick="shuffleRoles(false, true)" id="startMafia">>Start with a Casper</button><br><br>
+		<button onclick="shuffleRoles(true, false)" id="manualMode">>Manual Mode</button><br><br>
+		<button onclick="shufflePlayers()" id="shufflePlayers">>Shuffle players</button><br>
 	</div>
 
 	<div id="shuffle" style="display: none">
@@ -115,15 +115,19 @@
 	</div>
 
 	<div id="game" style="display: none">
-		<div><span><b>Current day:</b> <span id="current_day">1</span></span></div>
-		<button onclick="nextDay(-1)">Previous Day</button>
-		<button onclick="nextDay(1)">Next Day</button>
+		<div id="endCheck"></div><br>
+
+		<div><span><b>Current day: </b><span id="current_day">1</span></span>
+			<button onclick="nextDay(-1)">Previous Day</button>
+			<button onclick="nextDay(1)">Next Day</button>
+		</div>
 		<div><br></div>
 
 		<table style="width: 100%">
 			<tr id="rolesHeader"></tr>
 			<tr id="rolesDeath"></tr>
 			<tr id="rolesRole"></tr>
+			<tr id="rolesChange"></tr>
 			<tr id="rolesFouls"></tr>
 			<tr id="rolesKill"></tr>
 			<tr id="rolesVotes"></tr>
@@ -153,15 +157,17 @@
 		<span id="revoteTimer">30.0</span> sec
 		<button onclick="startRevote()" id="revoteStart">Start</button>
 		<button onclick="resetRevote()" id="revoteReset">Reset</button><br>
-		<button onclick="stopRevote()" id="revoteNext"><h3>Revote</h3></button>
+		<button onclick="stopRevote()" id="revoteNext">
+			<h3>Revote</h3>
+		</button>
 	</div>
 
 	<script type="text/javascript">
-		const ROLES_FAKE = ["Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Detective"];
+		const ROLES_MANUAL = ["Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian"];
 		const ROLES_REAL = ["Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Mafia", "Mafia", "Boss", "Detective"];
 		const COUNT = 10;
 
-		let is_fake_mode;
+		let is_manual_mode;
 
 		function $(q) {
 			return document.querySelector(q);
@@ -205,12 +211,11 @@
 
 		let roles, alive, votes, fouls, revoteList, revotePlayer, revoteTime, timerInterval = setInterval(tick, 100), timerTime, day;
 
-		function shuffleRoles(fake, casper) {
+		function shuffleRoles(manual, casper) {
 			hide("#mainMenu");
 			show("#game");
 
-			is_fake_mode = fake;
-			roles = fake ? ROLES_FAKE : ROLES_REAL;
+			roles = manual ? ROLES_MANUAL : ROLES_REAL;
 			shuffle(roles);
 			while (casper && roles[roles.length - 1] != "Civilian") {
 				shuffle(roles);
@@ -224,13 +229,23 @@
 			initTimer();
 			document.querySelector("#current_day").innerHTML = day;
 
-			drawGame();
+			if (manual) {
+				is_manual_mode = !manual;
+				$("#endCheck").innerHTML = `<b>Endgame check: </b>
+			<button onclick="switchEnd()"><span id="switch">Turn off</span></button>`
+				switchEnd();
+			} else {
+				is_manual_mode = manual;
+				$("#endCheck").innerHTML = ``;
+				drawGame();
+			}
 			drawVotes();
 		}
 
 		function drawGame() {
 			$("#rolesHeader").innerHTML = "";
 			$("#rolesDeath").innerHTML = "";
+			$("#rolesChange").innerHTML = "";
 			$("#rolesRole").innerHTML = "";
 			$("#rolesFouls").innerHTML = "";
 			$("#rolesKill").innerHTML = "";
@@ -245,6 +260,12 @@
 				td2.innerHTML = fouls[i - 1] === 4 ? "Banned" : (alive[i - 1] ? "Alive" : "Dead");
 				td2.className = fouls[i - 1] === 4 ? "banned" : (alive[i - 1] ? "alive" : "dead");
 				$("#rolesDeath").appendChild(td2);
+
+				if (is_manual_mode) {
+					const td22 = document.createElement("td");
+					td22.innerHTML = `<button onclick="changeRole(${i})">Change</button>`;
+					$("#rolesChange").appendChild(td22);
+				}
 
 				const td3 = document.createElement("td");
 				td3.innerHTML = roles[i - 1];
@@ -264,6 +285,45 @@
 				td6.innerHTML = (fouls[i - 1] < 4 && alive[i - 1]) ? (votes.indexOf(i) > -1 ? `<button onclick="unmarkForVote(${i})">Recall</button>` : `<button onclick="markForVote(${i})">For a vote</button>`) : "";
 				$("#rolesVotes").appendChild(td6);
 			}
+		}
+
+		function switchEnd() {
+			if (is_manual_mode) {
+				$("#switch").innerHTML = "Turn off";
+			} else {
+				$("#switch").innerHTML = "Turn on";
+			}
+			is_manual_mode = !is_manual_mode;
+			drawGame();
+			checkEnd();
+		}
+
+		function changeRole(index) {
+			while (true) {
+				let newRole = prompt(`Select a new role:\n c, C - Civilian\n d, D - Detective\n m, M - Mafia\n b, B - Boss`, "");
+				if (!isNaN(newRole)) {
+					return;
+				}
+
+				if (newRole === 'c' || newRole === 'C') {
+					roles[index - 1] = "Civilian";
+					break;
+				}
+				if (newRole === 'm' || newRole === 'M') {
+					roles[index - 1] = "Mafia";
+					break;
+				}
+				if (newRole === 'd' || newRole === 'D') {
+					roles[index - 1] = "Detective";
+					break;
+				}
+				if (newRole === 'b' || newRole === 'B') {
+					roles[index - 1] = "Boss";
+					break;
+				}
+			}
+
+			drawGame();
 		}
 
 		function drawVotes() {
@@ -313,23 +373,26 @@
 			}
 			drawGame();
 			drawVotes();
+			checkEnd();
+		}
 
-			let cntMir = 0, cntMaf = 0;
-			for (let i = 0; i < COUNT; i++) {
-				if (alive[i]) {
-					if (roles[i] === "Civilian" || roles[i] === "Detective") {
-						cntMir++;
-					} else {
-						cntMaf++;
+		function checkEnd() {
+			if (!is_manual_mode) {
+				let cntMir = 0, cntMaf = 0;
+				for (let i = 0; i < COUNT; i++) {
+					if (alive[i]) {
+						if (roles[i] === "Civilian" || roles[i] === "Detective") {
+							cntMir++;
+						} else {
+							cntMaf++;
+						}
 					}
 				}
-			}
 
-			if (!is_fake_mode) {
-				if (cntMaf === 0) {
-					alert("Game over, Civilians won!");
-				} else if (cntMaf >= cntMir) {
+				if (cntMaf >= cntMir) {
 					alert("Game over, Mafia won!");
+				} else if (cntMaf === 0) {
+					alert("Game over, Civilians won!");
 				}
 			}
 		}
@@ -371,9 +434,12 @@
 
 			let results = [], votesSum = 0;
 			for (let j = 0; j < votes.length - 1 && votesSum < alive.length; j++) {
-				const i = votes[j];
-				results.push([i, parseInt(prompt(`A voting for player ${i}, maximum ${alive.length - votesSum}. Result?`, "0"))]);
-				if (isNaN(results[j][1]) || results[j][1] > alive.length - votesSum || results[j][1] < 0) {
+				results.push([votes[j], parseInt(prompt(`A voting for player ${votes[j]}, maximum ${alive.length - votesSum}. Result?`, "0"))]);
+				if (isNaN(results[j][1])) {
+					return;
+				}
+
+				if (results[j][1] > alive.length - votesSum || results[j][1] < 0) {
 					alert(`Wrong votes number!`);
 					results.pop();
 					j--;
@@ -469,8 +535,11 @@
 			for (let j = 0; j < revoteList.length - 1 && votesSum < alive.length; j++) {
 				const i = revoteList[j];
 				results.push([i, parseInt(prompt(`A voting for player ${i}, maximum ${alive.length - votesSum}. Result?`, "0"))]);
+				if (isNaN(results[j][1])) {
+					return;
+				}
 
-				if (isNaN(results[j][1]) || results[j][1] > alive.length - votesSum || results[j][1] < 0) {
+				if (results[j][1] > alive.length - votesSum || results[j][1] < 0) {
 					alert(`Wrong votes number!`);
 					results.pop();
 					j--;

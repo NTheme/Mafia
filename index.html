@@ -402,6 +402,16 @@
 			drawGame();
 		}
 
+		function aliveNum() {
+			let cnt = 0;
+			for (let i = 0; i < alive.length; i++) {
+				if (alive[i]) {
+					cnt++;
+				}
+			}
+			return cnt;
+		}
+
 		function markForVote(i) {
 			votes.push(i);
 			drawGame();
@@ -433,13 +443,13 @@
 			}
 
 			let results = [], votesSum = 0;
-			for (let j = 0; j < votes.length - 1 && votesSum < alive.length; j++) {
-				results.push([votes[j], parseInt(prompt(`A voting for player ${votes[j]}, maximum ${alive.length - votesSum}. Result?`, "0"))]);
+			for (let j = 0; j < votes.length - 1 && votesSum < aliveNum(); j++) {
+				results.push([votes[j], parseInt(prompt(`A voting for player ${votes[j]}, maximum ${aliveNum() - votesSum}. Result?`, "0"))]);
 				if (isNaN(results[j][1])) {
 					return;
 				}
 
-				if (results[j][1] > alive.length - votesSum || results[j][1] < 0) {
+				if (results[j][1] > aliveNum() - votesSum || results[j][1] < 0) {
 					alert(`Wrong votes number!`);
 					results.pop();
 					j--;
@@ -532,14 +542,14 @@
 			revoteTime = 30;
 
 			let results = [], votesSum = 0;
-			for (let j = 0; j < revoteList.length - 1 && votesSum < alive.length; j++) {
+			for (let j = 0; j < revoteList.length - 1 && votesSum < aliveNum(); j++) {
 				const i = revoteList[j];
-				results.push([i, parseInt(prompt(`A voting for player ${i}, maximum ${alive.length - votesSum}. Result?`, "0"))]);
+				results.push([i, parseInt(prompt(`A voting for player ${i}, maximum ${aliveNum() - votesSum}. Result?`, "0"))]);
 				if (isNaN(results[j][1])) {
 					return;
 				}
 
-				if (results[j][1] > alive.length - votesSum || results[j][1] < 0) {
+				if (results[j][1] > aliveNum() - votesSum || results[j][1] < 0) {
 					alert(`Wrong votes number!`);
 					results.pop();
 					j--;

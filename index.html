@@ -101,17 +101,17 @@
 	</div>
 
 	<div id="shuffle" style="display: none">
-		Player <b>1</b> should move to place <b id="place1"></b>.<br>
-		Player <b>2</b> should move to place <b id="place2"></b>.<br>
-		Player <b>3</b> should move to place <b id="place3"></b>.<br>
-		Player <b>4</b> should move to place <b id="place4"></b>.<br>
-		Player <b>5</b> should move to place <b id="place5"></b>.<br>
-		Player <b>6</b> should move to place <b id="place6"></b>.<br>
-		Player <b>7</b> should move to place <b id="place7"></b>.<br>
-		Player <b>8</b> should move to place <b id="place8"></b>.<br>
-		Player <b>9</b> should move to place <b id="place9"></b>.<br>
-		Player <b>10</b> should move to place <b id="place10"></b>.<br>
-		<button onclick="mainMenu(false)">Back</button>
+		<button onclick="mainMenu(false)">Back</button><br><br>
+		Player <b>01</b> should move to place <b id="place1"></b><br>
+		Player <b>02</b> should move to place <b id="place2"></b><br>
+		Player <b>03</b> should move to place <b id="place3"></b><br>
+		Player <b>04</b> should move to place <b id="place4"></b><br>
+		Player <b>05</b> should move to place <b id="place5"></b><br>
+		Player <b>06</b> should move to place <b id="place6"></b><br>
+		Player <b>07</b> should move to place <b id="place7"></b><br>
+		Player <b>08</b> should move to place <b id="place8"></b><br>
+		Player <b>09</b> should move to place <b id="place9"></b><br>
+		Player <b>10</b> should move to place <b id="place10"></b>
 	</div>
 
 	<div id="game" style="display: none">
@@ -205,7 +205,7 @@
 			}
 			shuffle(chg);
 			for (let i = 1; i <= COUNT; i++) {
-				$(`#place${i}`).innerHTML = chg[i - 1];
+				$(`#place${i}`).innerHTML = (chg[i - 1] < 10) ? `0${chg[i - 1]}` : `${chg[i - 1]}`;
 			}
 		}
 

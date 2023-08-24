@@ -18,20 +18,26 @@
 			text-align: center;
 		}
 
-		.alive {
+		.Alive {
 			color: #0A0;
 		}
 
-		.dead {
+		.Dead {
 			color: #A00;
 		}
 
-		.banned {
+		.Banned {
 			color: #00F;
 		}
 
 		.Civilian {
 			color: #8dd097;
+		}
+
+		.Detective {
+			color: #00F;
+			font-weight: bold;
+			font-style: italic;
 		}
 
 		.Mafia {
@@ -45,29 +51,23 @@
 			font-style: italic;
 		}
 
-		.Detective {
-			color: #00F;
-			font-weight: bold;
-			font-style: italic;
-		}
-
-		.fouls0 {
+		.Fouls0 {
 			color: #888;
 		}
 
-		.fouls1 {
+		.Fouls1 {
 			color: #444;
 		}
 
-		.fouls2 {
+		.Fouls2 {
 			color: #F88;
 		}
 
-		.fouls3 {
+		.Fouls3 {
 			color: #F00;
 		}
 
-		.fouls4 {
+		.Fouls4 {
 			color: #F00;
 			font-weight: bold;
 		}
@@ -91,83 +91,87 @@
 <body>
 	<center><button onclick="mainMenu()" id="menu">
 			<h1><u>MAFIA</u></h1>
-		</button></center><br>
+		</button></center>
+	<br>
 
 	<div id="mainMenu">
-		<button onclick="shuffleRoles(false, false)" id="startMafia">>Start a full Table</button><br><br>
-		<button onclick="shuffleRoles(false, true)" id="startMafia">>Start with a Casper</button><br><br>
-		<button onclick="shuffleRoles(true, false)" id="manualMode">>Manual Mode</button><br><br>
+		<button onclick="startGame(false, 10)" id="startFull">>Start a full Table</button><br><br>
+		<button onclick="startGame(false, 9)" id="startCasper">>Start with a Casper</button><br><br>
+		<button onclick="startGame(true, 10)" id="startManual">>Manual Mode</button><br><br>
 		<button onclick="shufflePlayers()" id="shufflePlayers">>Shuffle players</button><br>
 	</div>
 
-	<div id="shuffle" style="display: none">
-		<button onclick="mainMenu(false)">Back</button><br><br>
-		Player <b>01</b> should move to place <b id="place1"></b><br>
-		Player <b>02</b> should move to place <b id="place2"></b><br>
-		Player <b>03</b> should move to place <b id="place3"></b><br>
-		Player <b>04</b> should move to place <b id="place4"></b><br>
-		Player <b>05</b> should move to place <b id="place5"></b><br>
-		Player <b>06</b> should move to place <b id="place6"></b><br>
-		Player <b>07</b> should move to place <b id="place7"></b><br>
-		Player <b>08</b> should move to place <b id="place8"></b><br>
-		Player <b>09</b> should move to place <b id="place9"></b><br>
-		Player <b>10</b> should move to place <b id="place10"></b>
+	<div id="shuffleScreen" style="display: none">
+		<button onclick="mainMenu()">Back</button><br><br>
+		Player <b>01</b> should move to place <b id="place0"></b><br>
+		Player <b>02</b> should move to place <b id="place1"></b><br>
+		Player <b>03</b> should move to place <b id="place2"></b><br>
+		Player <b>04</b> should move to place <b id="place3"></b><br>
+		Player <b>05</b> should move to place <b id="place4"></b><br>
+		Player <b>06</b> should move to place <b id="place5"></b><br>
+		Player <b>07</b> should move to place <b id="place6"></b><br>
+		Player <b>08</b> should move to place <b id="place7"></b><br>
+		Player <b>09</b> should move to place <b id="place8"></b><br>
+		Player <b>10</b> should move to place <b id="place9"></b>
 	</div>
 
-	<div id="game" style="display: none">
+	<div id="gameScreen" style="display: none">
 		<div id="endCheck"></div><br>
 
-		<div><span><b>Current day: </b><span id="current_day">1</span></span>
-			<button onclick="nextDay(-1)">Previous Day</button>
-			<button onclick="nextDay(1)">Next Day</button>
+		<div><span><b>Current day: </b><span id="dayCurrent">1</span></span>
+			<button onclick="daySwitch(-1)">Previous Day</button>
+			<button onclick="daySwitch(1)">Next Day</button>
 		</div>
 		<div><br></div>
 
 		<table style="width: 100%">
-			<tr id="rolesHeader"></tr>
-			<tr id="rolesDeath"></tr>
+			<tr id="rolesNubmber"></tr>
+			<tr id="rolesStatus"></tr>
 			<tr id="rolesRole"></tr>
-			<tr id="rolesChange"></tr>
+			<tr id="rolesAssign"></tr>
 			<tr id="rolesFouls"></tr>
 			<tr id="rolesKill"></tr>
-			<tr id="rolesVotes"></tr>
+			<tr id="rolesVote"></tr>
 		</table>
 
 		<div>
 			<h3>Timer</h3>
 
-			<div><span id="timer">60.0</span> sec</div>
-			<button onclick="startTimer()" id="timerStartPause">Start</button>
-			<button onclick="resetTimer()">Reset</button>
+			<div><span id="timer60Value">60.0</span> sec</div>
+			<button onclick="startTimer()" id="timer60Switch">Start</button>
+			<button onclick="restartTimer()" id="timer60Restart">Restart</button>
 		</div>
 
 		<div>
 			<h3>Voting</h3>
 
-			<div id="voteList"></div>
-			<button onclick="startVoting()">Start voting</button>
+			<div id="votingList"></div>
+			<button onclick="votingProcess()" id="votingStart">Start voting</button>
 		</div>
 
 		<textarea placeholder="Notes"></textarea>
 	</div>
 
-	<div id="revote" style="display: none">
-		<h3>An accident between players: <span id="revoteList"></span></h3>
+	<div id="revotingScreen" style="display: none">
+		<table style="width: 100%">
+			<tr id="rolesNubmber"></tr>
+			<tr id="rolesStatus"></tr>
+			<tr id="rolesFouls"></tr>
+		</table>
 
-		<span id="revoteTimer">30.0</span> sec
-		<button onclick="startRevote()" id="revoteStart">Start</button>
-		<button onclick="resetRevote()" id="revoteReset">Reset</button><br>
-		<button onclick="stopRevote()" id="revoteNext">
-			<h3>Revote</h3>
+		<h3>An accident between players: <span id="revotingList"></span></h3>
+
+		<span id="timer30Value">30.0</span> sec
+		<button onclick="startTimer()" id="timer30Switch">Start</button>
+		<button onclick="restartTimer()" id="timer30Restart">Restart</button><br><br>
+		<button onclick="revotingProcess()" id="revotingProcess">
+			<h3>Revoting</h3>
 		</button>
 	</div>
 
 	<script type="text/javascript">
 		const ROLES_MANUAL = ["Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian"];
-		const ROLES_REAL = ["Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Mafia", "Mafia", "Boss", "Detective"];
-		const COUNT = 10;
-
-		let is_manual_mode;
+		const ROLES_REAL = ["Mafia", "Mafia", "Boss", "Detective", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian", "Civilian"];
 
 		function $(q) {
 			return document.querySelector(q);
@@ -181,121 +185,134 @@
 			$(q).style.display = "";
 		}
 
-		function shuffle(a) {
-			for (let i = a.length - 1; i > 0; i--) {
+		function shuffle(a, len) {
+			for (let i = len - 1; i > 0; i--) {
 				const j = Math.floor(Math.random() * (i + 1));
 				[a[i], a[j]] = [a[j], a[i]];
 			}
 		}
 
 		function mainMenu() {
-			hide("#shuffle");
-			hide("#game");
-			hide("#revote");
+			hide("#shuffleScreen");
+			hide("#gameScreen");
+			hide("#revotingScreen");
 			show("#mainMenu");
 		}
 
+		let roles, alive, fouls, votingList, numPlayers, is_manual_mode, day;
+
 		function shufflePlayers() {
 			hide("#mainMenu");
-			show("#shuffle");
+			show("#shuffleScreen");
 
-			let chg = [];
-			for (let i = 1; i <= COUNT; i++) {
-				chg.push(i);
+			let numList = [];
+			for (let i = 1; i <= 10; i++) {
+				numList.push(i);
 			}
-			shuffle(chg);
-			for (let i = 1; i <= COUNT; i++) {
-				$(`#place${i}`).innerHTML = (chg[i - 1] < 10) ? `0${chg[i - 1]}` : `${chg[i - 1]}`;
+			shuffle(numList, 10);
+			for (let i = 0; i < 10; i++) {
+				$(`#place${i}`).innerHTML = (numList[i] < 10) ? `0${numList[i]}` : numList[i];
 			}
 		}
 
-		let roles, alive, votes, fouls, revoteList, revotePlayer, revoteTime, timerInterval = setInterval(tick, 100), timerTime, day;
-
-		function shuffleRoles(manual, casper) {
+		function startGame(manual, players) {
 			hide("#mainMenu");
-			show("#game");
+			show("#gameScreen");
 
-			roles = manual ? ROLES_MANUAL : ROLES_REAL;
-			shuffle(roles);
-			while (casper && roles[roles.length - 1] != "Civilian") {
-				shuffle(roles);
-			}
+			numPlayers = players;
+			is_manual_mode = manual;
+			roles = Array.from(is_manual_mode ? ROLES_MANUAL : ROLES_REAL);
+			shuffle(roles, players ? 9 : 10);
 
-			alive = Array(COUNT).fill(true);
-			fouls = Array(COUNT).fill(0);
-			votes = [];
+			alive = Array(numPlayers).fill(true);
+			fouls = Array(numPlayers).fill(0);
+			votingList = [];
+
 			day = 1;
-
-			initTimer();
-			document.querySelector("#current_day").innerHTML = day;
-
-			if (manual) {
-				is_manual_mode = !manual;
+			document.querySelector("#dayCurrent").innerHTML = day;
+			if (is_manual_mode) {
 				$("#endCheck").innerHTML = `<b>Endgame check: </b>
-			<button onclick="switchEnd()"><span id="switch">Turn off</span></button>`
-				switchEnd();
+				<button onclick="endSwitch()"><span id="endSwitch">Turn on</span></button>`
 			} else {
-				is_manual_mode = manual;
 				$("#endCheck").innerHTML = ``;
-				drawGame();
 			}
-			drawVotes();
+
+			initTimer(60);
+			drawGame();
 		}
 
 		function drawGame() {
-			$("#rolesHeader").innerHTML = "";
-			$("#rolesDeath").innerHTML = "";
-			$("#rolesChange").innerHTML = "";
+			$("#rolesNubmber").innerHTML = "";
+			$("#rolesStatus").innerHTML = "";
+			$("#rolesAssign").innerHTML = "";
 			$("#rolesRole").innerHTML = "";
 			$("#rolesFouls").innerHTML = "";
 			$("#rolesKill").innerHTML = "";
-			$("#rolesVotes").innerHTML = "";
+			$("#rolesVote").innerHTML = "";
 
-			for (let i = 1; i <= COUNT; i++) {
-				const th1 = document.createElement("th");
-				th1.innerHTML = `Player ${i}`;
-				$("#rolesHeader").appendChild(th1);
+			for (let i = 1; i <= numPlayers; i++) {
+				const td1 = document.createElement("th");
+				td1.innerHTML = `Player ${i}`;
+				td1.className = `Player${i}`;
+				$("#rolesNubmber").appendChild(td1);
 
 				const td2 = document.createElement("td");
-				td2.innerHTML = fouls[i - 1] === 4 ? "Banned" : (alive[i - 1] ? "Alive" : "Dead");
-				td2.className = fouls[i - 1] === 4 ? "banned" : (alive[i - 1] ? "alive" : "dead");
-				$("#rolesDeath").appendChild(td2);
+				td2.innerHTML = !alive[i - 1] ? "Dead" : (fouls[i - 1] === 4 ? "Banned" : (fouls[i - 1] === 3 ? "Alive, silent" : "Alive"));
+				td2.className = !alive[i - 1] ? "Dead" : (fouls[i - 1] === 4 ? "Banned" : "Alive");
+				$("#rolesStatus").appendChild(td2);
 
 				if (is_manual_mode) {
-					const td22 = document.createElement("td");
-					td22.innerHTML = `<button onclick="changeRole(${i})">Change</button>`;
-					$("#rolesChange").appendChild(td22);
+					const td3 = document.createElement("td");
+					td3.innerHTML = `<button onclick="changeRole(${i})">Change</button>`;
+					td3.className = `changeRole${i}`;
+					$("#rolesAssign").appendChild(td3);
 				}
 
-				const td3 = document.createElement("td");
-				td3.innerHTML = roles[i - 1];
-				td3.className = roles[i - 1];
-				$("#rolesRole").appendChild(td3);
-
 				const td4 = document.createElement("td");
-				td4.innerHTML = `<button onclick="decFoul(${i})">-</button>Fouls: ${fouls[i - 1]}<button onclick="incFoul(${i})">+</button>`;
-				td4.className = `fouls${fouls[i - 1]}`;
-				$("#rolesFouls").appendChild(td4);
+				td4.innerHTML = roles[i - 1];
+				td4.className = roles[i - 1];
+				$("#rolesRole").appendChild(td4);
 
 				const td5 = document.createElement("td");
-				td5.innerHTML = (fouls[i - 1] < 4) ? (alive[i - 1] ? `<button onclick="kill(${i})">Kill</button>` : `<button onclick="revive(${i})">Revive</button>`) : "";
-				$("#rolesKill").appendChild(td5);
+				td5.innerHTML = `<button onclick="decFoul(${i})">-</button>Fouls: ${fouls[i - 1]}<button onclick="incFoul(${i})">+</button>`;
+				td5.className = `Fouls${fouls[i - 1]}`;
+				$("#rolesFouls").appendChild(td5);
 
 				const td6 = document.createElement("td");
-				td6.innerHTML = (fouls[i - 1] < 4 && alive[i - 1]) ? (votes.indexOf(i) > -1 ? `<button onclick="unmarkForVote(${i})">Recall</button>` : `<button onclick="markForVote(${i})">For a vote</button>`) : "";
-				$("#rolesVotes").appendChild(td6);
+				td6.innerHTML = (fouls[i - 1] < 4) ? (alive[i - 1] ? `<button onclick="kill(${i})">Kill</button>` : `<button onclick="revive(${i})">Revive</button>`) : "";
+				td6.className = `kill${i}`;
+				$("#rolesKill").appendChild(td6);
+
+				const td7 = document.createElement("td");
+				td7.innerHTML = (fouls[i - 1] < 4 && alive[i - 1]) ? (votingList.indexOf(i) > -1 ? `<button onclick="unmarkForVote(${i})">Recall</button>` : `<button onclick="markForVote(${i})">For a voting</button>`) : "";
+				td7.className = `vote${i}`;
+				$("#rolesVote").appendChild(td7);
+			}
+
+			if (votingList.length === 0) {
+				$("#votingList").innerHTML = "Nobody is for a voting";
+			} else {
+				$("#votingList").innerHTML = `Players for a voting: ${votingList.join(", ")}`;
 			}
 		}
 
-		function switchEnd() {
+		function endSwitch() {
 			if (is_manual_mode) {
-				$("#switch").innerHTML = "Turn off";
+				$("#endSwitch").innerHTML = "Turn off";
 			} else {
-				$("#switch").innerHTML = "Turn on";
+				$("#endSwitch").innerHTML = "Turn on";
 			}
 			is_manual_mode = !is_manual_mode;
 			drawGame();
 			checkEnd();
+		}
+
+		function daySwitch(diff) {
+			if (day + diff < 1) {
+				return;
+			}
+			day += diff;
+			document.querySelector("#dayCurrent").innerHTML = day;
 		}
 
 		function changeRole(index) {
@@ -305,20 +322,20 @@
 					return;
 				}
 
-				if (newRole === 'c' || newRole === 'C') {
-					roles[index - 1] = "Civilian";
-					break;
-				}
 				if (newRole === 'm' || newRole === 'M') {
-					roles[index - 1] = "Mafia";
-					break;
-				}
-				if (newRole === 'd' || newRole === 'D') {
-					roles[index - 1] = "Detective";
+					roles[index - 1] = ROLES_REAL[1];
 					break;
 				}
 				if (newRole === 'b' || newRole === 'B') {
-					roles[index - 1] = "Boss";
+					roles[index - 1] = ROLES_REAL[2];
+					break;
+				}
+				if (newRole === 'd' || newRole === 'D') {
+					roles[index - 1] = ROLES_REAL[3];
+					break;
+				}
+				if (newRole === 'c' || newRole === 'C') {
+					roles[index - 1] = ROLES_REAL[4];
 					break;
 				}
 			}
@@ -326,27 +343,12 @@
 			drawGame();
 		}
 
-		function drawVotes() {
-			if (votes.length === 0) {
-				$("#voteList").innerHTML = "Nobody is for a vote";
-			} else {
-				$("#voteList").innerHTML = `Players for a vote: ${votes.join(", ")}`;
-			}
-		}
-
-		function nextDay(dif) {
-			if (day + dif < 1) {
-				return;
-			}
-			day += dif;
-			document.querySelector("#current_day").innerHTML = day;
-		}
-
 		function decFoul(i) {
 			if (fouls[i - 1] <= 0) {
 				return;
 			}
 			fouls[i - 1]--;
+
 			drawGame();
 		}
 
@@ -356,45 +358,27 @@
 			}
 			fouls[i - 1]++;
 
-			let index = votes.indexOf(i);
-			if (fouls[i - 1] == 4 && index != -1) {
-				votes.splice(index, 1);
+			if (fouls[i - 1] == 4) {
+				alive[i - 1] = false;
+				let index = votingList.indexOf(i);
+				if (index != -1) {
+					votingList.splice(index, 1);
+				}
 			}
+
 			drawGame();
-			drawVotes();
 		}
 
 		function kill(i) {
 			alive[i - 1] = false;
 
-			let index = votes.indexOf(i);
+			let index = votingList.indexOf(i);
 			if (index != -1) {
-				votes.splice(index, 1);
+				votingList.splice(index, 1);
 			}
+
 			drawGame();
-			drawVotes();
 			checkEnd();
-		}
-
-		function checkEnd() {
-			if (!is_manual_mode) {
-				let cntMir = 0, cntMaf = 0;
-				for (let i = 0; i < COUNT; i++) {
-					if (alive[i]) {
-						if (roles[i] === "Civilian" || roles[i] === "Detective") {
-							cntMir++;
-						} else {
-							cntMaf++;
-						}
-					}
-				}
-
-				if (cntMaf >= cntMir) {
-					alert("Game over, Mafia won!");
-				} else if (cntMaf === 0) {
-					alert("Game over, Civilians won!");
-				}
-			}
 		}
 
 		function revive(i) {
@@ -403,249 +387,183 @@
 		}
 
 		function aliveNum() {
-			let cnt = 0;
-			for (let i = 0; i < alive.length; i++) {
-				if (alive[i]) {
-					cnt++;
+			return alive.reduce((a, b) => a + (b ? 1 : 0), 0);
+		}
+
+		function checkEnd() {
+			if (!is_manual_mode) {
+				let cntMafia = 0;
+				for (let i = 0; i < numPlayers; i++) {
+					if (alive[i] && (roles[i] === "Mafia" || roles[i] === "Boss")) {
+						cntMafia++;
+					}
+				}
+
+				if (cntMafia * 2 >= aliveNum()) {
+					alert("Game over, Mafia won!");
+				} else if (cntMafia === 0) {
+					alert("Game over, Civilians won!");
 				}
 			}
-			return cnt;
 		}
 
 		function markForVote(i) {
-			votes.push(i);
+			votingList.push(i);
 			drawGame();
-			drawVotes();
 		}
 
 		function unmarkForVote(i) {
-			votes.splice(votes.indexOf(i), 1);
+			votingList.splice(votingList.indexOf(i), 1);
 			drawGame();
-			drawVotes();
 		}
 
-		function startVoting() {
-			day++;
-			document.querySelector("#current_day").innerHTML = day;
-			initTimer();
+		function voting() {
+			let results = [], votingListSum = 0;
 
-			if (votes.length === 0) {
-				alert("Nobody is for a vote!");
-				return;
-			}
-
-			if (votes.length === 1 && day === 1) {
-				alert("First day and 1 person is for a vote, all players remain alive");
-				votes = [];
-				drawGame();
-				drawVotes();
-				return;
-			}
-
-			let results = [], votesSum = 0;
-			for (let j = 0; j < votes.length - 1 && votesSum < aliveNum(); j++) {
-				results.push([votes[j], parseInt(prompt(`A voting for player ${votes[j]}, maximum ${aliveNum() - votesSum}. Result?`, "0"))]);
+			for (let j = 0; j < votingList.length - 1 && votingListSum < aliveNum(); j++) {
+				results.push([votingList[j], parseInt(prompt(`A voting for player ${votingList[j]}, maximum ${aliveNum() - votingListSum}. Result?`, "0"))]);
 				if (isNaN(results[j][1])) {
 					return;
 				}
 
-				if (results[j][1] > aliveNum() - votesSum || results[j][1] < 0) {
-					alert(`Wrong votes number!`);
+				if (results[j][1] > aliveNum() - votingListSum || results[j][1] < 0) {
+					alert(`Wrong number of votes!`);
 					results.pop();
 					j--;
 				} else {
-					votesSum += results[j][1];
+					votingListSum += results[j][1];
 				}
 			}
 
-			results.push([
-				votes.slice(-1)[0],
-				alive.reduce((a, b) => a + (b ? 1 : 0), 0) -
-				results.reduce((a, b) => a + b[1], 0)
-			]);
+			results.push([votingList.slice(-1)[0], aliveNum() - results.reduce((a, b) => a + b[1], 0)]);
 			results.sort(((a, b) => b[1] - a[1]));
 
 			let cntSimilar = 0;
 			while (cntSimilar < results.length && results[cntSimilar][1] === results[0][1]) {
 				cntSimilar++;
 			}
+			results = results.slice(0, cntSimilar);
+			return results;
+		}
 
-			if (cntSimilar > 1) {
-				revoteList = results.slice(0, cntSimilar).map(x => x[0]);
-				revotePlayer = revoteList[0];
-				hide("#game");
-				show("#revote");
-				revoteTime = 30;
-				drawRevote();
+		function votingProcess() {
+			day++;
+			document.querySelector("#dayCurrent").innerHTML = day;
+			initTimer(60);
+
+			if (votingList.length === 0) {
+				alert("Nobody is for a voting!");
+				return;
+			}
+
+			if (votingList.length === 1 && day === 2) {
+				alert("First day and 1 person is for a voting, all players remain alive");
+				votingList = [];
+				drawGame();
+				return;
+			}
+
+			let results = voting();
+
+			if (results.length > 1) {
+				votingList = results.map(x => x[0]);
+				revoting();
+			} else {
+				votingList = [];
+				kill(results[0][0]);
+				alert(`During a voting player ${results[0][0]} has been killed with ${results[0][1]} hands, give him 60 seconds`);
+			}
+
+			drawGame();
+		}
+
+		function revoting() {
+			hide("#gameScreen");
+			show("#revotingScreen");
+			$("#revotingList").innerHTML = votingList.join(", ");
+			initTimer(30);
+		}
+
+		function revotingProcess() {
+			let results = voting();
+
+			if (results.length > 1) {
+				if (parseInt(prompt(`A voting for killing all players, maximum ${alive.length}. Result?`, "0")) > aliveNum() / 2) {
+					alert(`Players ${votingList.join(", ")} have been killed, give them last 60 seconds`);
+					for (const roles of votingList) {
+						kill(roles);
+					}
+				} else {
+					alert("Congratulations, there are no rats between players!");
+				}
 			} else {
 				kill(results[0][0]);
 				alert(`During a voting player ${results[0][0]} has been killed with ${results[0][1]} hands, give him 60 seconds`);
 			}
 
-			votes = [];
+			votingList = [];
+			hide("#revotingScreen");
+			show("#gameScreen");
+			initTimer(60);
 			drawGame();
-			drawVotes();
 		}
 
-		function drawRevote() {
-			$("#revoteList").innerHTML = revoteList.join(", ");
-			$("#revoteTimer").innerHTML = revoteTime.toFixed(1);
-		}
+		let timerLength, timerValue, timerInterval = setInterval(tick, 100);
 
-		function startRevote() {
-			if (revoteTime === 0) {
-				revoteTime = 30;
-			}
-
-			drawRevote();
-			$("#revoteStart").innerHTML = "Pause";
-			$("#revoteStart").onclick = pauseRevote;
-			timerInterval = setInterval(revoteTick, 100);
-		}
-
-		function pauseRevote() {
-			$("#revoteStart").innerHTML = "Start";
-			$("#revoteStart").onclick = startRevote;
+		function initTimer(time) {
 			clearInterval(timerInterval);
-		}
-
-		function resetRevote() {
-			clearInterval(timerInterval);
-			revoteTime = 30;
-			startRevote();
-		}
-
-		function stopRevote() {
-			$("#revoteStart").innerHTML = "Start";
-			$("#revoteStart").onclick = startRevote;
-			revoteTime = 0;
-			drawRevote();
-			clearInterval(timerInterval);
-			nextRevote();
-		}
-
-		function revoteTick() {
-			if (revoteTime <= 5.1 && revoteTime >= 5) {
-				wave(1);
-			} else if (revoteTime <= 0.1) {
-				revoteTime = 0;
-				drawRevote();
-				wave(3);
-				pauseRevote();
-				return;
-			}
-			revoteTime -= 0.1;
-			drawRevote();
-		}
-
-		function nextRevote() {
-			revoteTime = 30;
-
-			let results = [], votesSum = 0;
-			for (let j = 0; j < revoteList.length - 1 && votesSum < aliveNum(); j++) {
-				const i = revoteList[j];
-				results.push([i, parseInt(prompt(`A voting for player ${i}, maximum ${aliveNum() - votesSum}. Result?`, "0"))]);
-				if (isNaN(results[j][1])) {
-					return;
-				}
-
-				if (results[j][1] > aliveNum() - votesSum || results[j][1] < 0) {
-					alert(`Wrong votes number!`);
-					results.pop();
-					j--;
-				} else {
-					votesSum += results[j][1];
-				}
-			}
-
-			results.push([
-				revoteList.slice(-1)[0],
-				alive.reduce((a, b) => a + (b ? 1 : 0), 0) -
-				results.reduce((a, b) => a + b[1], 0)
-			]);
-			results.sort(((a, b) => b[1] - a[1]));
-
-			let cntSimilar = 0;
-			while (cntSimilar < results.length && results[cntSimilar][1] === results[0][1]) {
-				cntSimilar++;
-			}
-
-			if (cntSimilar > 1) {
-				const killAll = parseInt(prompt(`A voting for killing all players, maximum ${alive.length}. Result?`));
-				if (killAll >= alive.reduce((a, b) => a + (b ? 1 : 0), 0) / 2) {
-					alert(`Players ${revoteList.join(", ")} have been killed, give them last 60 seconds`);
-					for (const player of revoteList) {
-						kill(player);
-					}
-				} else {
-					alert("Congratulations, there are no rats between players!");
-				}
-
-				hide("#revote");
-				show("#game");
-			} else {
-				kill(results[0][0]);
-				alert(`During a voting player ${results[0][0]} has been killed with ${results[0][1]} votes, give him 60 seconds`);
-				hide("#revote");
-				show("#game");
-			}
+			timerValue = timerLength = time;
+			$(`#timer${timerLength}Value`).innerHTML = time.toFixed(1);
+			$(`#timer${timerLength}Switch`).onclick = startTimer;
+			$(`#timer${timerLength}Switch`).innerHTML = "Start";
 		}
 
 		function startTimer() {
 			clearInterval(timerInterval);
-			if (timerTime === 0) {
-				timerTime = 60;
+			if (timerValue === 0) {
+				timerValue = timerLength;
 			}
-			drawTimer();
-			$("#timerStartPause").onclick = pauseTimer;
-			$("#timerStartPause").innerHTML = "Pause";
+			$(`#timer${timerLength}Value`).innerHTML = timerValue.toFixed(1);
+			$(`#timer${timerLength}Switch`).onclick = pauseTimer;
+			$(`#timer${timerLength}Switch`).innerHTML = "Pause";
 			timerInterval = setInterval(tick, 100);
 		}
 
 		function pauseTimer() {
-			$("#timerStartPause").onclick = startTimer;
-			$("#timerStartPause").innerHTML = "Start";
 			clearInterval(timerInterval);
+			$(`#timer${timerLength}Switch`).onclick = startTimer;
+			$(`#timer${timerLength}Switch`).innerHTML = "Start";
 		}
 
-		function resetTimer() {
-			timerTime = 60;
+		function restartTimer() {
+			timerValue = timerLength;
 			startTimer();
 		}
 
-		function initTimer() {
-			timerTime = 60;
-			clearInterval(timerInterval);
-			$("#timer").innerHTML = "60.0";
-			$("#timerStartPause").onclick = startTimer;
-			$("#timerStartPause").innerHTML = "Start";
-		}
-
 		function tick() {
-			if (timerTime <= 10.1 && timerTime >= 10) {
+			if (timerValue <= timerLength / 6 + 0.1 && timerValue >= timerLength) {
 				wave(1);
-			} else if (timerTime <= 0.1) {
-				timerTime = 0;
-				drawTimer();
+			} else if (timerValue <= 0.1) {
+				timerValue = 0;
+				$(`#timer${timerLength}Value`).innerHTML = timerValue.toFixed(1);
 				wave(3);
 				pauseTimer();
 				return;
 			}
-			timerTime -= 0.1;
-			drawTimer();
+			timerValue -= 0.1;
+			$(`#timer${timerLength}Value`).innerHTML = timerValue.toFixed(1);
 		}
 
-		function drawTimer() {
-			$("#timer").innerHTML = timerTime.toFixed(1);
-		}
+		const SOUND = new Audio("data:audio/wav;base64,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cqJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
 
 		function wave(i) {
-			const snd = new Audio("data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7xA4Tvh9Rz/y8QADBwMWgQAZG/ILNAARQ4GLTcDeIIIhxGOBAuD7hOfBB3/94gcJ3w+o5/5eIAIAAAVwWgQAVQ2ORaIQwEMAJiDg95G4nQL7mQVWI6GwRcfsZAcsKkJvxgxEjzFUgfHoSQ9Qq7KNwqHwuB13MA4a1q/DmBrHgPcmjiGoh//EwC5nGPEmS4RcfkVKOhJf+WOgoxJclFz3kgn//dBA+ya1GhurNn8zb//9NNutNuhz31f////9vt///z+IdAEAAAK4LQIAKobHItEIYCGAExBwe8jcToF9zIKrEdDYIuP2MgOWFSE34wYiR5iqQPj0JIeoVdlG4VD4XA67mAcNa1fhzA1jwHuTRxDUQ//iYBczjHiTJcIuPyKlHQkv/LHQUYkuSi57yQT//uggfZNajQ3Vmz+Zt//+mm3Wm3Q576v////+32///5/EOgAAADVghQAAAAA//uQZAUAB1WI0PZugAAAAAoQwAAAEk3nRd2qAAAAACiDgAAAAAAABCqEEQRLCgwpBGMlJkIz8jKhGvj4k6jzRnqasNKIeoh5gI7BJaC1A1AoNBjJgbyApVS4IDlZgDU5WUAxEKDNmmALHzZp0Fkz1FMTmGFl1FMEyodIavcCAUHDWrKAIA4aa2oCgILEBupZgHvAhEBcZ6joQBxS76AgccrFlczBvKLC0QI2cBoCFvfTDAo7eoOQInqDPBtvrDEZBNYN5xwNwxQRfw8ZQ5wQVLvO8OYU+mHvFLlDh05Mdg7BT6YrRPpCBznMB2r//xKJjyyOh+cImr2/4doscwD6neZjuZR4AgAABYAAAABy1xcdQtxYBYYZdifkUDgzzXaXn98Z0oi9ILU5mBjFANmRwlVJ3/6jYDAmxaiDG3/6xjQQCCKkRb/6kg/wW+kSJ5//rLobkLSiKmqP/0ikJuDaSaSf/6JiLYLEYnW/+kXg1WRVJL/9EmQ1YZIsv/6Qzwy5qk7/+tEU0nkls3/zIUMPKNX/6yZLf+kFgAfgGyLFAUwY//uQZAUABcd5UiNPVXAAAApAAAAAE0VZQKw9ISAAACgAAAAAVQIygIElVrFkBS+Jhi+EAuu+lKAkYUEIsmEAEoMeDmCETMvfSHTGkF5RWH7kz/ESHWPAq/kcCRhqBtMdokPdM7vil7RG98A2sc7zO6ZvTdM7pmOUAZTnJW+NXxqmd41dqJ6mLTXxrPpnV8avaIf5SvL7pndPvPpndJR9Kuu8fePvuiuhorgWjp7Mf/PRjxcFCPDkW31srioCExivv9lcwKEaHsf/7ow2Fl1T/9RkXgEhYElAoCLFtMArxwivDJJ+bR1HTKJdlEoTELCIqgEwVGSQ+hIm0NbK8WXcTEI0UPoa2NbG4y2K00JEWbZavJXkYaqo9CRHS55FcZTjKEk3NKoCYUnSQ0rWxrZbFKbKIhOKPZe1cJKzZSaQrIyULHDZmV5K4xySsDRKWOruanGtjLJXFEmwaIbDLX0hIPBUQPVFVkQkDoUNfSoDgQGKPekoxeGzA4DUvnn4bxzcZrtJyipKfPNy5w+9lnXwgqsiyHNeSVpemw4bWb9psYeq//uQZBoABQt4yMVxYAIAAAkQoAAAHvYpL5m6AAgAACXDAAAAD59jblTirQe9upFsmZbpMudy7Lz1X1DYsxOOSWpfPqNX2WqktK0DMvuGwlbNj44TleLPQ+Gsfb+GOWOKJoIrWb3cIMeeON6lz2umTqMXV8Mj30yWPpjoSa9ujK8SyeJP5y5mOW1D6hvLepeveEAEDo0mgCRClOEgANv3B9a6fikgUSu/DmAMATrGx7nng5p5iimPNZsfQLYB2sDLIkzRKZOHGAaUyDcpFBSLG9MCQALgAIgQs2YunOszLSAyQYPVC2YdGGeHD2dTdJk1pAHGAWDjnkcLKFymS3RQZTInzySoBwMG0QueC3gMsCEYxUqlrcxK6k1LQQcsmyYeQPdC2YfuGPASCBkcVMQQqpVJshui1tkXQJQV0OXGAZMXSOEEBRirXbVRQW7ugq7IM7rPWSZyDlM3IuNEkxzCOJ0ny2ThNkyRai1b6ev//3dzNGzNb//4uAvHT5sURcZCFcuKLhOFs8mLAAEAt4UWAAIABAAAAAB4qbHo0tIjVkUU//uQZAwABfSFz3ZqQAAAAAngwAAAE1HjMp2qAAAAACZDgAAAD5UkTE1UgZEUExqYynN1qZvqIOREEFmBcJQkwdxiFtw0qEOkGYfRDifBui9MQg4QAHAqWtAWHoCxu1Yf4VfWLPIM2mHDFsbQEVGwyqQoQcwnfHeIkNt9YnkiaS1oizycqJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
-			snd.play();
+			SOUND.play();
 			if (i > 1) {
-				snd.onended = () => wave(i - 1);
+				SOUND.onended = () => wave(i - 1);
 			}
+			SOUND.pause();
 		}
+
 	</script>
 </body>
 
